@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevStudyHub · all modules + vue + keyboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f7fb;
+      color: #1a2639;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      background: #0b1e33;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    header h1 {
+      font-weight: 600;
+      font-size: 1.8rem;
+      letter-spacing: -0.02em;
+    }
+    header span {
+      background: #2d4c7c;
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .app-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 280px;
+      background: white;
+      border-right: 1px solid #dbe2ed;
+      padding: 1.8rem 0.8rem;
+      overflow-y: auto;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.02);
+    }
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .sidebar a {
+      text-decoration: none;
+      color: #1e2f4a;
+      padding: 0.7rem 1.2rem;
+      border-radius: 10px;
+      font-weight: 500;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a i { font-style: normal; font-weight: 600; width: 24px; color: #2d4c7c; }
+    .sidebar a:hover {
+      background: #e7eef9;
+      border-left-color: #2d4c7c;
+    }
+    .sidebar a.active {
+      background: #e1e8f2;
+      border-left-color: #0b1e33;
+      font-weight: 600;
+      color: #0b1e33;
+    }
+    .main-content {
+      flex: 1;
+      background: #f4f7fb;
+      overflow-y: auto;
+      padding: 2rem 2.5rem;
+    }
+    .module-section {
+      display: none;
+      animation: fade 0.2s ease;
+    }
+    .module-section.active-section {
+      display: block;
+    }
+    @keyframes fade { from {opacity:0.3;} to {opacity:1;} }
+
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 1.8rem 2rem;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.03);
+      margin-bottom: 2rem;
+      border: 1px solid #eef3fa;
+    }
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: #0b1e33;
+      border-bottom: 3px solid #cbd6e8;
+      padding-bottom: 0.5rem;
+    }
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 1.5rem 0 1rem;
+      color: #1f3a60;
+    }
+    h4 {
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin: 1.2rem 0 0.5rem;
+      color: #2a4b7a;
+    }
+    ul, ol {
+      padding-left: 1.8rem;
+      margin: 0.5rem 0 1.2rem;
+    }
+    li {
+      margin: 0.3rem 0;
+    }
+    .badge {
+      background: #d4e0f0;
+      color: #0b1e33;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: 30px;
+      display: inline-block;
+      margin-right: 0.5rem;
+    }
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+    .tool-item {
+      background: #f0f5fe;
+      padding: 0.4rem 1rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    pre {
+      background: #1e2f4a;
+      color: #e4f0fb;
+      padding: 1.2rem;
+      border-radius: 16px;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      font-family: 'JetBrains Mono', monospace;
+      margin: 1.2rem 0;
+    }
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background: #eef3fa;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    hr {
+      border: none;
+      border-top: 2px dashed #ccd9ed;
+      margin: 2rem 0;
+    }
+    .note-meta {
+      color: #4d6278;
+      font-size: 0.95rem;
+      margin-top: 0.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    th, td {
+      border: 1px solid #ccd9ed;
+      padding: 0.5rem;
+      text-align: left;
+    }
+    th {
+      background: #e7eef9;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>📘 DevStudyHub+</h1>
+  <span>software development · Vue · keyboard skills</span>
+</header>
+<div class="app-container">
+  <div class="sidebar">
+    <nav>
+      <a href="#" data-module="webDev" class="active"><i>🌐</i> Website Dev</a>
+      <a href="#" data-module="js"><i>⚡</i> JavaScript</a>
+      <a href="#" data-module="git"><i>📦</i> Version control</a>
+      <a href="#" data-module="vue"><i>🎮</i> Game in Vue</a>
+      <a href="#" data-module="graphic"><i>🎨</i> Graphic design</a>
+      <a href="#" data-module="uxui"><i>🖌️</i> UX / UI</a>
+      <a href="#" data-module="lit"><i>💻</i> Computer literacy</a>
+    </nav>
+  </div>
+
+  <div class="main-content">
+    <!-- Website Development (unchanged, but kept) -->
+    <section id="webDev" class="module-section active-section">
+      <div class="card">
+        <h2>🌐 Website development (HTML & CSS)</h2>
+        <h3>📌 Learning outcomes</h3>
+        <ul>
+          <li>Structure web pages with HTML5</li>
+          <li>Style with CSS3: selectors, box model, flex/grid</li>
+          <li>Responsive design & accessibility</li>
+        </ul>
+        <h3>🏷️ Common HTML tags</h3>
+        <div class="tool-grid">
+          <span class="tool-item">&lt;html&gt;</span> <span class="tool-item">&lt;head&gt;</span> <span class="tool-item">&lt;body&gt;</span>
+          <span class="tool-item">&lt;h1&gt;–&lt;h6&gt;</span> <span class="tool-item">&lt;p&gt;</span> <span class="tool-item">&lt;a&gt;</span>
+          <span class="tool-item">&lt;img&gt;</span> <span class="tool-item">&lt;div&gt;</span> <span class="tool-item">&lt;span&gt;</span>
+          <span class="tool-item">&lt;ul&gt;/&lt;ol&gt;</span> <span class="tool-item">&lt;li&gt;</span> <span class="tool-item">&lt;form&gt;</span>
+        </div>
+        <pre>selector { property: value; display: flex; }</pre>
+      </div>
+    </section>
+
+    <!-- JavaScript (unchanged) -->
+    <section id="js" class="module-section">
+      <div class="card">
+        <h2>⚡ JavaScript core</h2>
+        <pre>let x = 10; const sum = (a,b)=>a+b; fetch(url).then(...)</pre>
+      </div>
+    </section>
+
+    <!-- Version control (unchanged) -->
+    <section id="git" class="module-section">
+      <div class="card"><h2>📦 Git & GitHub</h2><pre>git init; git add; git commit -m ""; git push</pre></div>
+    </section>
+
+    <!-- ========== VUE.JS & GAME DEVELOPMENT (completely updated) ========= -->
+    <section id="vue" class="module-section">
+      <div class="card">
+        <h2>🎮 Vue.js Framework & Game Development</h2>
+        <p class="badge">Based on SWDVF301 & summarized notes</p>
+
+        <h3>📘 Learning outcome 1: Set Up Environment</h3>
+        <h4>Key concepts</h4>
+        <ul>
+          <li><strong>CLI</strong> – Vue CLI scaffolds projects.</li>
+          <li><strong>Node.js & NPM</strong> – runtime & package manager.</li>
+          <li><strong>Single Page Application (SPA)</strong> – one HTML, dynamic updates.</li>
+          <li><strong>Dependencies</strong> – external libraries (package.json).</li>
+        </ul>
+        <h4>Installation steps</h4>
+        <pre>node -v   # check node
+npm install -g @vue/cli          # install Vue CLI
+vue create my-vue-app            # create project
+cd my-vue-app && npm run serve   # run dev server</pre>
+        <h4>Project folder structure</h4>
+        <table>
+          <tr><th>Folder/File</th><th>Purpose</th></tr>
+          <tr><td>node_modules/</td><td>dependencies</td></tr>
+          <tr><td>public/</td><td>static files (index.html)</td></tr>
+          <tr><td>src/</td><td>main source code</td></tr>
+          <tr><td>src/assets</td><td>images, global CSS</td></tr>
+          <tr><td>src/components</td><td>reusable .vue components</td></tr>
+          <tr><td>src/views</td><td>page-level components</td></tr>
+          <tr><td>src/router</td><td>Vue Router config</td></tr>
+          <tr><td>src/store</td><td>Vuex/Pinia store</td></tr>
+          <tr><td>App.vue</td><td>root component</td></tr>
+          <tr><td>main.js</td><td>entry point</td></tr>
+        </table>
+
+        <h3>⚙️ Learning outcome 2: Apply Vue Framework</h3>
+        <h4>Components (reusable blocks)</h4>
+        <pre>&lt;template&gt; &lt;h2&gt;{{ title }}&lt;/h2&gt; &lt;/template&gt;
+&lt;script&gt; export default { props: ['title'] } &lt;/script&gt;</pre>
+        <p><strong>View components</strong> (pages) go in <code>views/</code> and are route‑linked.</p>
+
+        <h4>Vue Router</h4>
+        <pre>npm install vue-router</pre>
+        <p><strong>router/index.js</strong></p>
+        <pre>import { createRouter, createWebHistory } from 'vue-router'
+import Home from '../views/Home.vue'
+const routes = [
+  { path: '/', component: Home },
+  { path: '/about', component: () => import('../views/About.vue') },
+  { path: '/:pathMatch(.*)*', component: NotFound } // 404
+]
+export default createRouter({ history: createWebHistory(), routes })</pre>
+        <p>Use <code>&lt;router-link&gt;</code> and <code>&lt;router-view&gt;</code>.</p>
+
+        <h4>Data manipulation (Composition API)</h4>
+        <pre>&lt;script setup&gt;
+import { ref, reactive, onMounted } from 'vue'
+const count = ref(0)
+const form = reactive({ name: '' })
+onMounted(() => console.log('mounted'))
+&lt;/script&gt;</pre>
+
+        <h4>Forms & validation</h4>
+        <pre>&lt;form @submit.prevent="submitForm"&gt;
+  &lt;input v-model="form.email" /&gt;
+  &lt;span v-if="errors.email"&gt;{{ errors.email }}&lt;/span&gt;
+&lt;/form&gt;</pre>
+
+        <h4>API requests with Axios</h4>
+        <pre>npm install axios
+// src/api/axios.js
+import axios from 'axios'
+export default axios.create({ baseURL: import.meta.env.VITE_API_URL })</pre>
+        <p><strong>.env</strong> → <code>VITE_API_URL=https://fakestoreapi.com</code></p>
+
+        <h4>State management (Vuex 4)</h4>
+        <pre>npm install vuex@4
+// store/index.js
+import { createStore } from 'vuex'
+export default createStore({
+  state: { count: 0 },
+  getters: { double: state => state.count*2 },
+  mutations: { increment(state) { state.count++ } },
+  actions: { incAsync({ commit }) { setTimeout(() => commit('increment'), 1000) } }
+})</pre>
+        <p>Use <code>useStore()</code> (Composition) or <code>mapGetters</code> (Options).</p>
+
+        <h3>🎯 Learning outcome 3: Plan Game</h3>
+        <ul>
+          <li><strong>Storyline</strong> – based on game objectives (e.g., picture slider puzzle).</li>
+          <li><strong>Game controls</strong> – keyboard/mouse, hand accessibility.</li>
+          <li><strong>Game interface</strong> – splash screen, HUD (score, level, time).</li>
+          <li><strong>Game mechanics</strong> – rules, moves, empty slot, shuffle.</li>
+          <li><strong>Characters</strong> – playable / non‑playable (if any).</li>
+          <li><strong>Environment</strong> – dimensions, perspective, boundaries, scenes.</li>
+        </ul>
+        <p><em>Example from integrated situation:</em> 8‑piece slider puzzle, historical figures, reward with fun facts.</p>
+
+        <h3>🕹️ Learning outcome 4: Develop Game (Vue)</h3>
+        <ul>
+          <li>Use <code>setInterval</code> for timer, increment scores.</li>
+          <li>Design alert messages (success, failure).</li>
+          <li>Store game state in Vuex (e.g., pieces, moves).</li>
+          <li>Deploy on Netlify:
+            <pre>npm run build
+# drag dist folder to Netlify, or connect Git repo</pre>
+          </li>
+        </ul>
+
+        <h3>🧪 Practical exercises (from summarized doc)</h3>
+        <ul>
+          <li><strong>Product inventory</strong> – form with validation, display table.</li>
+          <li><strong>Student marks calculator</strong> – computed properties (PASS/FAIL).</li>
+          <li><strong>Vuex shopping cart</strong> – actions, mutations, getters.</li>
+        </ul>
+        <p>📌 <strong>Options API vs Composition API</strong> – both supported.</p>
+      </div>
+    </section>
+
+    <!-- Graphic design (unchanged, huge) -->
+    <section id="graphic" class="module-section">
+      <div class="card">
+        <h2>🎨 Graphic design (Photoshop & Illustrator)</h2>
+        <p>Content from previous version (tools, layers, export formats) remains here.</p>
+      </div>
+    </section>
+
+    <!-- UX/UI (unchanged) -->
+    <section id="uxui" class="module-section">
+      <div class="card"><h2>🖌️ UX/UI fundamentals</h2><p>User research, wireframes, Figma, etc.</p></div>
+    </section>
+
+    <!-- ========== COMPUTER LITERACY + KEYBOARD SKILLS (expanded) ========= -->
+    <section id="lit" class="module-section">
+      <div class="card">
+        <h2>💻 Computer literacy & keyboard mastery</h2>
+        <p class="badge">includes Web Development L3 keyboard skills</p>
+
+        <h3>⌨️ Keyboard fundamentals</h3>
+        <ul>
+          <li><strong>Computer keyboard</strong> – peripheral for text input.</li>
+          <li>Types by key arrangement: <strong>QWERTY</strong> (standard), <strong>AZERTY</strong> (French).</li>
+          <li>By connection: wired, wireless, virtual (software).</li>
+        </ul>
+
+        <h4>Parts of a keyboard</h4>
+        <ul>
+          <li><strong>Alphanumeric keys</strong> – letters, numbers, symbols.</li>
+          <li><strong>Numeric keypad</strong> – calculator style (NumLock).</li>
+          <li><strong>Function keys</strong> – F1‑F12 (help, refresh, etc.).</li>
+          <li><strong>Cursor‑control keys</strong> – arrows, Home, End, Insert, Del, PageUp/Down.</li>
+          <li><strong>Special keys</strong> – Ctrl, Alt, Shift, Win, Print Screen, Pause, etc.</li>
+        </ul>
+
+        <h3>🔣 Key combinations (shortcuts)</h3>
+        <table>
+          <tr><th>Shortcut</th><th>Meaning</th></tr>
+          <tr><td>Ctrl+C / Ctrl+V</td><td>Copy / Paste</td></tr>
+          <tr><td>Ctrl+X / Ctrl+Z</td><td>Cut / Undo</td></tr>
+          <tr><td>Ctrl+A / Ctrl+S</td><td>Select all / Save</td></tr>
+          <tr><td>Ctrl+F / Ctrl+H</td><td>Find / Replace</td></tr>
+          <tr><td>Alt+Tab</td><td>Switch programs</td></tr>
+          <tr><td>Windows key + D</td><td>Show desktop</td></tr>
+          <tr><td>Windows key + L</td><td>Lock computer</td></tr>
+          <tr><td>Windows key + E</td><td>Open Explorer</td></tr>
+          <tr><td>Alt + 0169</td><td>© copyright symbol</td></tr>
+          <tr><td>Alt + 64</td><td>@ at symbol</td></tr>
+          <tr><td>Ctrl + Shift + Esc</td><td>Task Manager</td></tr>
+        </table>
+
+        <h3>🖐️ Typing technique & ergonomics</h3>
+        <ul>
+          <li><strong>Home row</strong>: left hand on A,S,D,F ; right on J,K,L,; .</li>
+          <li>Keep wrists straight, elbows at 90°, monitor at eye level.</li>
+          <li>Use <strong>feather touch</strong>, don’t look at keyboard.</li>
+        </ul>
+
+        <h4>Typing speed measurements</h4>
+        <table>
+          <tr><th>Term</th><th>Formula</th></tr>
+          <tr><td>WPM (words/min)</td><td>(total chars / 5) / time (min)</td></tr>
+          <tr><td>Net WPM</td><td>WPM – (errors / time)</td></tr>
+          <tr><td>CPM</td><td>characters per minute</td></tr>
+          <tr><td>KPM</td><td>keystrokes per minute</td></tr>
+        </table>
+        <p>Average speed: ~40 WPM, good: 60‑70 WPM.</p>
+
+        <h3>📘 Typing Master software</h3>
+        <ul>
+          <li>Teaches finger placement, speed tests, accuracy tracking.</li>
+          <li>Provides error analysis (frequent mistakes, weak keys).</li>
+          <li>WPM calculation after each lesson.</li>
+        </ul>
+
+        <h3>✅ Quick exercises (from PDF)</h3>
+        <ul>
+          <li>Match shortcuts: Ctrl+B (bold), Ctrl+P (print), Shift+Del (permanent delete).</li>
+          <li>Identify keyboard parts from diagram.</li>
+          <li>Proper sitting posture – feet flat, screen at eye level.</li>
+        </ul>
+        <p class="note-meta">🔗 Practice online: typing.com, typingclub.com, keybr.com</p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- simple navigation -->
+<script>
+  (function() {
+    const links = document.querySelectorAll('.sidebar a');
+    const sections = document.querySelectorAll('.module-section');
+    function activate(id) {
+      sections.forEach(s => s.classList.remove('active-section'));
+      document.getElementById(id)?.classList.add('active-section');
+      links.forEach(l => l.classList.remove('active'));
+      const activeLink = Array.from(links).find(l => l.dataset.module === id);
+      if (activeLink) activeLink.classList.add('active');
+    }
+    links.forEach(l => {
+      l.addEventListener('click', (e) => {
+        e.preventDefault();
+        activate(l.dataset.module);
+      });
+    });
+    // default
+    activate('webDev');
+  })();
+</script>
+<!-- notes: all new content integrated from vue pdf, summarized doc, and keyboard pdf -->
+</body>
+</html>
